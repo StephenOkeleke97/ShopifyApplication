@@ -2,6 +2,7 @@ package com.shopify.model;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,9 +13,10 @@ public class Inventory {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long inventoryId;
+	@Column(unique = true)
 	private String inventoryName;
-	private long price;
-	
+	private double price;
+
 	public Inventory() {
 		super();
 	}
@@ -23,7 +25,7 @@ public class Inventory {
 	 * @param inventoryName
 	 * @param price
 	 */
-	public Inventory(String inventoryName, long price) {
+	public Inventory(String inventoryName, double price) {
 		super();
 		this.inventoryName = inventoryName;
 		this.price = price;
@@ -45,11 +47,11 @@ public class Inventory {
 		this.inventoryName = inventoryName;
 	}
 
-	public long getPrice() {
+	public double getPrice() {
 		return price;
 	}
 
-	public void setPrice(long price) {
+	public void setPrice(double price) {
 		this.price = price;
 	}
 

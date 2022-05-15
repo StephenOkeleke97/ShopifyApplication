@@ -1,5 +1,9 @@
 package com.shopify.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+@JsonInclude(value = Include.NON_NULL)
 public class ResponseDTO {
 	/**
 	 * Message to be returned to client.
@@ -10,6 +14,7 @@ public class ResponseDTO {
 	 * an error or false otherwise.
 	 */
 	private boolean error;
+	private Object data;
 
 	public ResponseDTO() {
 		super();
@@ -39,6 +44,14 @@ public class ResponseDTO {
 
 	public void setError(boolean error) {
 		this.error = error;
+	}
+	
+	public Object getData() {
+		return data;
+	}
+	
+	public void setData(Object data) {
+		this.data = data;
 	}
 	
 }
