@@ -462,6 +462,47 @@ public class Controller {
 		return Utility.generateResponse("Inventory quantity successfully decreased", false, result);
 	}
 
+	/**
+	 * Get total inventories in all warehouses.
+	 * 
+	 * @return inventory as data in response dto
+	 */
+	@GetMapping("/inventory")
+	public @ResponseBody ResponseDTO getAllInventory() {
+		ResponseDTO result = new ResponseDTO("Success", false);
+
+		result.setData(inventoryWarehouseRepository.findIdPriceQuantityGroupById());
+		return result;
+	}
+
+	/**
+	 * Get inventory by warehouse.
+	 * 
+	 * @param warehouseId target warehouse
+	 * @param response    {@link HttpServletResponse}
+	 * @return result of action
+	 */
+	@GetMapping("/inventory/{warehouseId}")
+	public @ResponseBody ResponseDTO getInventoryByWarehouse(@PathVariable long warehouseId,
+			HttpServletResponse response) {
+		ResponseDTO result = new ResponseDTO("Success", false);
+
+		if (warehouseId < 0) {
+			response.setStatus(400);
+			return Utility.generateResponse("Warehouse ID must be positive", true, result);
+		}
+
+		Warehouse warehouse = warehouseRepository.findById(warehouseId).orElse(null);
+
+		if (warehouse == null) {
+			response.setStatus(400);
+			return Utility.generateResponse("Warehouse does not exist", true, result);
+		}
+
+		result.setData(inventoryWarehouseRepository.findIdPriceQuantityByWarehouseId(warehouseId));
+		return result;
+	}
+
 	// get inv
 	// get inv in warehouse
 	// add or remove from inventory
