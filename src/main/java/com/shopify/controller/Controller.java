@@ -79,16 +79,17 @@ public class Controller {
 			return Utility.generateResponse("Invalid name.", true, result);
 		}
 
-		if (!Utility.validateWareHouseNameIsUnique(name, warehouseRepository)) {
-			response.setStatus(400);
-			return Utility.generateResponse("There is already a warehouse with this name.", true, result);
-		}
-
 		Warehouse warehouse = warehouseRepository.findById(id).orElse(null);
 
 		if (warehouse == null) {
 			response.setStatus(400);
 			return Utility.generateResponse("Warehouse does not exist", true, result);
+		}
+
+		if (!Utility.validateWareHouseNameIsUnique(name, warehouseRepository)
+				&& (!name.equals(warehouse.getWarehouseName()))) {
+			response.setStatus(400);
+			return Utility.generateResponse("There is already a warehouse with this name.", true, result);
 		}
 
 		warehouse.setWarehouseName(name);
@@ -111,6 +112,7 @@ public class Controller {
 		Warehouse warehouse = warehouseRepository.findById(id).orElse(null);
 
 		if (warehouse != null) {
+
 			List<InventoryWarehouse> warehouseInventory = inventoryWarehouseRepository.findOneByWarehouse(id);
 			if (warehouseInventory.size() > 0) {
 				response.setStatus(400);
@@ -150,8 +152,14 @@ public class Controller {
 	 */
 	@PostMapping("/inventory")
 	public @ResponseBody ResponseDTO createInventory(@RequestParam String name, @RequestParam double price,
-			@RequestParam long warehouseId, @RequestParam int quantity, HttpServletResponse response) {
+			@RequestParam(required = false) Long warehouseId, @RequestParam int quantity,
+			HttpServletResponse response) {
 		ResponseDTO result = new ResponseDTO();
+
+		if (warehouseId == null) {
+			Warehouse defaultWH = warehouseRepository.findByWarehouseName("None");
+			warehouseId = defaultWH.getWarehouseId();
+		}
 
 		if (!Utility.validateStringArgs(name) || !Utility.validateDoubleMustBePositive(price)
 				|| !Utility.validateIntMustBePositive(quantity)) {
@@ -227,6 +235,45 @@ public class Controller {
 	}
 
 	/**
+	 * Delete inventory from warehouse.
+	 * 
+	 * @param warehouseId id of warehouse to delete inventory from
+	 * @param inventoryId id of inventory to be deleted
+	 * @param response    {@link HttpServletResponse}
+	 * @return result of action
+	 */
+	@DeleteMapping("/inventory/{inventoryId}/warehouse/{warehouseId}")
+	public @ResponseBody ResponseDTO removeInventoryFromWarehouse(@PathVariable long warehouseId,
+			@PathVariable long inventoryId, HttpServletResponse response) {
+		ResponseDTO result = new ResponseDTO();
+
+		Warehouse warehouse = warehouseRepository.findById(warehouseId).orElse(null);
+		if (warehouse == null) {
+			response.setStatus(400);
+			return Utility.generateResponse("Warehouse does not exist", true, result);
+		}
+
+		Inventory inventory = inventoryRepository.findById(inventoryId).orElse(null);
+
+		if (inventory == null) {
+			response.setStatus(400);
+			return Utility.generateResponse("Inventory does not exist", true, result);
+		}
+
+		InventoryWarehouse inventoryWarehouse = inventoryWarehouseRepository.findByInventoryAndWarehouse(inventory,
+				warehouse);
+
+		if (inventoryWarehouse == null) {
+			response.setStatus(400);
+			return Utility.generateResponse("This inventory does not exist in this warehouse", true, result);
+		}
+
+		inventoryWarehouseRepository.delete(inventoryWarehouse);
+
+		return Utility.generateResponse("Inventory successfully deleted from warehouse", false, result);
+	}
+
+	/**
 	 * Update inventory.
 	 * 
 	 * @param id       id of inventory to be updated
@@ -250,7 +297,6 @@ public class Controller {
 				response.setStatus(400);
 				return Utility.generateResponse("Invalid name", true, result);
 			}
-			inventory.setInventoryName(name);
 		}
 
 		if (price != null) {
@@ -261,11 +307,13 @@ public class Controller {
 			inventory.setPrice(price);
 		}
 
-		if (!Utility.validateInventoryNameIsUnique(name, inventoryRepository)) {
+		if (!Utility.validateInventoryNameIsUnique(name, inventoryRepository)
+				&& !name.equals(inventory.getInventoryName())) {
 			response.setStatus(400);
 			return Utility.generateResponse("Inventory with this name already exists", true, result);
 		}
 
+		inventory.setInventoryName(name);
 		inventoryRepository.save(inventory);
 		return Utility.generateResponse("Inventory successfully created", false, result);
 	}
@@ -502,9 +550,4 @@ public class Controller {
 		result.setData(inventoryWarehouseRepository.findIdPriceQuantityByWarehouseId(warehouseId));
 		return result;
 	}
-
-	// get inv
-	// get inv in warehouse
-	// add or remove from inventory
-
 }
