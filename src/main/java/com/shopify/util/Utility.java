@@ -1,19 +1,29 @@
 package com.shopify.util;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.shopify.dto.ResponseDTO;
 import com.shopify.model.Inventory;
+import com.shopify.model.InventoryWarehouse;
 import com.shopify.model.Warehouse;
 import com.shopify.repository.InventoryRepository;
+import com.shopify.repository.InventoryWarehouseRepository;
 import com.shopify.repository.WarehouseRepository;
 
 @Component
 public class Utility {
 
-	private Utility() {
+	@Autowired
+	private WarehouseRepository warehouseRepository;
 
-	}
+	@Autowired
+	private InventoryRepository inventoryRepository;
+
+	@Autowired
+	private InventoryWarehouseRepository inventoryWarehouseRepository;
 
 	/**
 	 * Since warehouse entities must have unique name, this validates that a
@@ -23,7 +33,7 @@ public class Utility {
 	 * @param warehouseRepository repository for location entity
 	 * @return true if no warehouse with name exists or false otherwise
 	 */
-	public static boolean validateWareHouseNameIsUnique(String name, WarehouseRepository warehouseRepository) {
+	public boolean validateWareHouseNameIsUnique(String name) {
 		Warehouse warehouse = warehouseRepository.findByWarehouseName(name);
 		return warehouse == null;
 	}
@@ -36,7 +46,7 @@ public class Utility {
 	 * @param inventoryRepository repository for location entity
 	 * @return true if no inventory with name exists or false otherwise
 	 */
-	public static boolean validateInventoryNameIsUnique(String name, InventoryRepository inventoryRepository) {
+	public boolean validateInventoryNameIsUnique(String name) {
 		Inventory inventory = inventoryRepository.findByInventoryName(name);
 		return inventory == null;
 	}
@@ -47,7 +57,7 @@ public class Utility {
 	 * @param args strings to be validated
 	 * @return true of string not empty or false otherwise
 	 */
-	public static boolean validateStringArgs(String... args) {
+	public boolean validateStringArgs(String... args) {
 		for (String s : args) {
 			if (s.trim().length() == 0) {
 				return false;
@@ -62,7 +72,7 @@ public class Utility {
 	 * @param number number to be validated
 	 * @return true if number is valid or false otherwise
 	 */
-	public static boolean validateDoubleMustBePositive(double number) {
+	public boolean validateDoubleMustBePositive(double number) {
 		if (number < 0)
 			return false;
 		return true;
@@ -74,7 +84,7 @@ public class Utility {
 	 * @param number number to be validated
 	 * @return true if number is valid or false otherwise
 	 */
-	public static boolean validateIntMustBePositive(int number) {
+	public boolean validateIntMustBePositive(int number) {
 		if (number < 0)
 			return false;
 		return true;
@@ -88,9 +98,44 @@ public class Utility {
 	 * @param response response to be returned
 	 * @return response dto object
 	 */
-	public static ResponseDTO generateResponse(String message, boolean isError, ResponseDTO response) {
+	public ResponseDTO generateResponse(String message, boolean isError, ResponseDTO response) {
 		response.setMessage(message);
 		response.setError(isError);
 		return response;
+	}
+
+	public boolean validateWarehouseExists(long id) {
+		Warehouse warehouse = warehouseRepository.findById(id).orElse(null);
+		return warehouse != null;
+	}
+
+	public boolean validateWarehouseNameCanBeUpdated(long id, String name) {
+		Warehouse warehouse = warehouseRepository.findById(id).orElse(null);
+		return validateWareHouseNameIsUnique(name) || name.equals(warehouse.getWarehouseName());
+	}
+
+	public boolean validateInventoryNameCanBeUpdated(long id, String name) {
+		Inventory inventory = inventoryRepository.findById(id).orElse(null);
+		return validateInventoryNameIsUnique(name) || name.equals(inventory.getInventoryName());
+	}
+
+	public boolean validateWarehouseInventoryCanBeDeleted(long id) {
+		List<InventoryWarehouse> warehouseInventory = inventoryWarehouseRepository.findOneByWarehouse(id);
+		if (warehouseInventory.size() > 0)
+			return false;
+		return true;
+	}
+
+	public boolean validateInventoryExists(long id) {
+		Inventory inventory = inventoryRepository.findById(id).orElse(null);
+		return inventory != null;
+	}
+
+	public boolean validateInventoryDoesNotExistInWarehouse(long invId, long warehouseId) {
+		Inventory inventory = inventoryRepository.findById(invId).orElse(null);
+		Warehouse warehouse = warehouseRepository.findById(warehouseId).orElse(null);
+		InventoryWarehouse inventoryWarehouse = inventoryWarehouseRepository.findByInventoryAndWarehouse(inventory,
+				warehouse);
+		return inventoryWarehouse == null;
 	}
 }

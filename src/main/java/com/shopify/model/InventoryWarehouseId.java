@@ -24,7 +24,7 @@ public class InventoryWarehouseId implements Serializable {
 	@JoinColumn(referencedColumnName = "inventoryId", 
 	foreignKey = @ForeignKey(name = "INVENTORY_ID_FK", 
 	foreignKeyDefinition = "FOREIGN KEY (inventory_inventory_id) REFERENCES "
-			+ "Inventory(inventory_id) ON DELETE CASCADE"))
+			+ "inventory(inventory_id) ON DELETE CASCADE"))
 	private Inventory inventory;
 	
 

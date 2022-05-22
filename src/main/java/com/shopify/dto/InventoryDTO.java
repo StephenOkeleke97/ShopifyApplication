@@ -7,5 +7,5 @@ public interface InventoryDTO {
 
 	int getQuantity();
 
-	int getPrice();
+	double getPrice();
 }

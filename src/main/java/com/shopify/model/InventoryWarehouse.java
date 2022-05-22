@@ -1,33 +1,26 @@
 package com.shopify.model;
 
-import java.util.Date;
-
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity
 public class InventoryWarehouse {
 
 	@EmbeddedId
-	private InventoryWarehouseId id; 
-	
+	private InventoryWarehouseId id;
+
 	private int totalQuantity;
-	private int quantityOfLastSupply;
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateOfLastSupply;
-	
+
 	@ManyToOne
 	@MapsId("inventoryId")
 	private Inventory inventory;
-	
+
 	@ManyToOne
 	@MapsId("locationId")
 	private Warehouse warehouse;
-	
+
 	public InventoryWarehouse() {
 		super();
 	}
@@ -72,21 +65,5 @@ public class InventoryWarehouse {
 
 	public void setWarehouse(Warehouse warehouse) {
 		this.warehouse = warehouse;
-	}
-
-	public int getQuantityOfLastSupply() {
-		return quantityOfLastSupply;
-	}
-
-	public void setQuantityLastSupply(int quantityLastSupplied) {
-		this.quantityOfLastSupply = quantityLastSupplied;
-	}
-
-	public Date getDateOfLastSupply() {
-		return dateOfLastSupply;
-	}
-
-	public void setDateOfLastSupply(Date dateOfLastSupply) {
-		this.dateOfLastSupply = dateOfLastSupply;
 	}
 }
