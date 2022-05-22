@@ -263,7 +263,7 @@ public class Controller {
 		if (price != null) {
 			if (!utility.validateDoubleMustBePositive(price)) {
 				response.setStatus(400);
-				return utility.generateResponse("Invalid Price", true, result);
+				return utility.generateResponse("Invalid price", true, result);
 			}
 		}
 
@@ -273,7 +273,7 @@ public class Controller {
 		}
 
 		inventoryService.updateInventory(id, price, name);
-		return utility.generateResponse("Inventory successfully created", false, result);
+		return utility.generateResponse("Inventory successfully updated", false, result);
 	}
 
 	/**

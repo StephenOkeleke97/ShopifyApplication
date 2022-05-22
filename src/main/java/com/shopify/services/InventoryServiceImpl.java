@@ -21,8 +21,12 @@ public class InventoryServiceImpl implements InventoryService {
 	@Override
 	public void updateInventory(long id, Double price, String name) {
 		Inventory inv = inventoryRepository.findById(id).orElse(null);
-		inv.setInventoryName(name);
-		inv.setPrice(price);
+		if (name != null) {
+			inv.setInventoryName(name);
+		}
+		if (price != null) {
+			inv.setPrice(price);
+		}
 		inventoryRepository.save(inv);
 
 	}
