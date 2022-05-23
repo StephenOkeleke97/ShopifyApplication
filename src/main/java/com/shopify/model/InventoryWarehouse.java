@@ -1,40 +1,47 @@
 package com.shopify.model;
 
-import java.util.Date;
-
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
+/**
+ * A class that represents an "is contained in" relationship between an
+ * inventory entity and a warehouse entity. Inventories can be contained in
+ * warehouses.
+ * 
+ * @author stephen
+ *
+ */
 @Entity
 public class InventoryWarehouse {
 
 	@EmbeddedId
-	private InventoryWarehouseId id; 
-	
+	private InventoryWarehouseId id;
+
 	private int totalQuantity;
-	private int quantityOfLastSupply;
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateOfLastSupply;
-	
+
 	@ManyToOne
 	@MapsId("inventoryId")
 	private Inventory inventory;
-	
+
 	@ManyToOne
 	@MapsId("locationId")
 	private Warehouse warehouse;
-	
+
+	/**
+	 * Constructs an instance of this class without any parameters.
+	 */
 	public InventoryWarehouse() {
 		super();
 	}
 
 	/**
-	 * @param id
-	 * @param quantity
+	 * Constructs an instance of this class with specified parameters.
+	 * 
+	 * @param id       composite primary key consisting of an inventory and a
+	 *                 warehouse entity
+	 * @param quantity quantity of inventory to be added to warehouse
 	 */
 	public InventoryWarehouse(InventoryWarehouseId id, int quantity) {
 		super();
@@ -72,21 +79,5 @@ public class InventoryWarehouse {
 
 	public void setWarehouse(Warehouse warehouse) {
 		this.warehouse = warehouse;
-	}
-
-	public int getQuantityOfLastSupply() {
-		return quantityOfLastSupply;
-	}
-
-	public void setQuantityLastSupply(int quantityLastSupplied) {
-		this.quantityOfLastSupply = quantityLastSupplied;
-	}
-
-	public Date getDateOfLastSupply() {
-		return dateOfLastSupply;
-	}
-
-	public void setDateOfLastSupply(Date dateOfLastSupply) {
-		this.dateOfLastSupply = dateOfLastSupply;
 	}
 }

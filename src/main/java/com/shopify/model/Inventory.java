@@ -1,13 +1,19 @@
 package com.shopify.model;
 
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * Class that represents an inventory table in application's relational
+ * database.
+ * 
+ * @author stephen
+ *
+ */
 @Entity
 public class Inventory {
 	@Id
@@ -17,13 +23,18 @@ public class Inventory {
 	private String inventoryName;
 	private double price;
 
+	/**
+	 * Constructs an instance of this class without any parameters.
+	 */
 	public Inventory() {
 		super();
 	}
 
 	/**
-	 * @param inventoryName
-	 * @param price
+	 * Constructs an instance of this class with specified parameters.
+	 * 
+	 * @param inventoryName name of inventory item
+	 * @param price         price of inventory item
 	 */
 	public Inventory(String inventoryName, double price) {
 		super();
