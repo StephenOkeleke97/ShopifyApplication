@@ -1,15 +1,21 @@
 package com.shopify.repository;
 
+import com.shopify.dto.InventoryDTO;
+import com.shopify.model.Inventory;
+import com.shopify.model.InventoryWarehouse;
+import com.shopify.model.Warehouse;
 import java.util.List;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import com.shopify.dto.InventoryDTO;
-import com.shopify.model.Inventory;
-import com.shopify.model.InventoryWarehouse;
-import com.shopify.model.Warehouse;
 
+/**
+ * Interface that represents a repository for the InventoryWarehouse entity.
+ * 
+ * @author stephen
+ *
+ */
 @Repository
 public interface InventoryWarehouseRepository extends CrudRepository<InventoryWarehouse, Long> {
 	/**
@@ -18,7 +24,7 @@ public interface InventoryWarehouseRepository extends CrudRepository<InventoryWa
 	 * 
 	 * @param inventory inventory composite key
 	 * @param warehouse warehouse composite key
-	 * @return
+	 * @return InventoryWarehouse instance or null if there is no match
 	 */
 	InventoryWarehouse findByInventoryAndWarehouse(Inventory inventory, Warehouse warehouse);
 
@@ -48,7 +54,8 @@ public interface InventoryWarehouseRepository extends CrudRepository<InventoryWa
 	/**
 	 * Method used to validate delete request. To ensure all inventory is accounted
 	 * for, a warehouse with inventory cannot be deleted. If returned list is not
-	 * empty, warehouse cannot be deleted.
+	 * empty, warehouse cannot be deleted. List is limited to 1 to improve
+	 * performance.
 	 * 
 	 * @param id id of warehouse to be validated
 	 * @return list of inventory associated with warehouse with only one item

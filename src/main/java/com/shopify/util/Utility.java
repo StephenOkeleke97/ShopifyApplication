@@ -1,10 +1,5 @@
 package com.shopify.util;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.shopify.dto.ResponseDTO;
 import com.shopify.model.Inventory;
 import com.shopify.model.InventoryWarehouse;
@@ -12,7 +7,17 @@ import com.shopify.model.Warehouse;
 import com.shopify.repository.InventoryRepository;
 import com.shopify.repository.InventoryWarehouseRepository;
 import com.shopify.repository.WarehouseRepository;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+/**
+ * Class that represents a utility with methods that perform tasks such as
+ * validation of end point parameters.
+ * 
+ * @author stephen
+ *
+ */
 @Component
 public class Utility {
 
@@ -104,21 +109,52 @@ public class Utility {
 		return response;
 	}
 
+	/**
+	 * Validates that a warehouse exists.
+	 * 
+	 * @param id id of warehouse to be validated
+	 * @return true if warehouse exists or false otherwise
+	 */
 	public boolean validateWarehouseExists(long id) {
 		Warehouse warehouse = warehouseRepository.findById(id).orElse(null);
 		return warehouse != null;
 	}
 
+	/**
+	 * Validates if warehouse name can be updated. Since warehouse names are unique,
+	 * no duplicates are allowed. However a warehouse can update its name to the
+	 * same value.
+	 * 
+	 * @param id   id of warehouse to be validated
+	 * @param name name of warehouse to be validated
+	 * @return true if warehouse name can be updated or false otherwise
+	 */
 	public boolean validateWarehouseNameCanBeUpdated(long id, String name) {
 		Warehouse warehouse = warehouseRepository.findById(id).orElse(null);
 		return validateWareHouseNameIsUnique(name) || name.equals(warehouse.getWarehouseName());
 	}
 
+	/**
+	 * Validates if inventory name can be updated. Since inventory names are unique,
+	 * no duplicates are allowed. However an inventory item can update its name to
+	 * the same value.
+	 * 
+	 * @param id   id of inventory to be validated
+	 * @param name name of inventory to be validated
+	 * @return true if inventory name can be updated or false otherwise
+	 */
 	public boolean validateInventoryNameCanBeUpdated(long id, String name) {
 		Inventory inventory = inventoryRepository.findById(id).orElse(null);
 		return validateInventoryNameIsUnique(name) || name.equals(inventory.getInventoryName());
 	}
 
+	/**
+	 * Validates if warehouse can be deleted. Warehouses that contain inventory
+	 * cannot be deleted and must be cleared first.
+	 * 
+	 * @param id id of warehouse to be validated
+	 * @return true if warehouse can be deleted or false otherwise
+	 */
 	public boolean validateWarehouseInventoryCanBeDeleted(long id) {
 		List<InventoryWarehouse> warehouseInventory = inventoryWarehouseRepository.findOneByWarehouse(id);
 		if (warehouseInventory.size() > 0)
@@ -126,11 +162,26 @@ public class Utility {
 		return true;
 	}
 
+	/**
+	 * Validates if inventory exists.
+	 * 
+	 * @param id id of inventory to be validated
+	 * @return true if inventory exists or false otherwise
+	 */
 	public boolean validateInventoryExists(long id) {
 		Inventory inventory = inventoryRepository.findById(id).orElse(null);
 		return inventory != null;
 	}
 
+	/**
+	 * Validates that inventory does not exist in warehouse. Inventory already
+	 * contained in warehouse cannot be added. It can however be increased, reduced
+	 * or removed.
+	 * 
+	 * @param invId       id of inventory to be validated
+	 * @param warehouseId id of warehouse to validate inventory based upon
+	 * @return true if inventory does not exist in warehouse or false otherwise
+	 */
 	public boolean validateInventoryDoesNotExistInWarehouse(long invId, long warehouseId) {
 		Inventory inventory = inventoryRepository.findById(invId).orElse(null);
 		Warehouse warehouse = warehouseRepository.findById(warehouseId).orElse(null);

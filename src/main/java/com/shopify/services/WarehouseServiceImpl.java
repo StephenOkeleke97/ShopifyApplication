@@ -1,7 +1,5 @@
 package com.shopify.services;
 
-import java.util.List;
-
 import com.shopify.dto.InventoryDTO;
 import com.shopify.model.Inventory;
 import com.shopify.model.InventoryWarehouse;
@@ -10,9 +8,16 @@ import com.shopify.model.Warehouse;
 import com.shopify.repository.InventoryRepository;
 import com.shopify.repository.InventoryWarehouseRepository;
 import com.shopify.repository.WarehouseRepository;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Class that represents an implementation of the WarehouseService interface.
+ * 
+ * @author stephen
+ *
+ */
 @Service
 public class WarehouseServiceImpl implements WarehouseService {
 

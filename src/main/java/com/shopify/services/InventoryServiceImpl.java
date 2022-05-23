@@ -5,6 +5,12 @@ import com.shopify.repository.InventoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Class that represents an implementation of the InventoryService interface.
+ * 
+ * @author stephen
+ *
+ */
 @Service
 public class InventoryServiceImpl implements InventoryService {
 

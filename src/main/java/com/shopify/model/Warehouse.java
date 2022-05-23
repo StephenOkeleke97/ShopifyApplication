@@ -1,13 +1,19 @@
 package com.shopify.model;
 
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * Class that represents a warehouse entity in application's relational
+ * database.
+ * 
+ * @author stephen
+ *
+ */
 @Entity
 public class Warehouse {
 	@Id
@@ -16,12 +22,17 @@ public class Warehouse {
 	@Column(unique = true)
 	private String warehouseName;
 
+	/**
+	 * Constructs an instance of this class without any parameters.
+	 */
 	public Warehouse() {
 		super();
 	}
 
 	/**
-	 * @param warehouseName
+	 * Constructs an instance of this class with specified parameters.
+	 * 
+	 * @param warehouseName name of warehouse
 	 */
 	public Warehouse(String warehouseName) {
 		super();

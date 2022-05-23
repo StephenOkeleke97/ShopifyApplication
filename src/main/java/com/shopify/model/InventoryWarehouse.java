@@ -5,6 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapsId;
 
+/**
+ * A class that represents an "is contained in" relationship between an
+ * inventory entity and a warehouse entity. Inventories can be contained in
+ * warehouses.
+ * 
+ * @author stephen
+ *
+ */
 @Entity
 public class InventoryWarehouse {
 
@@ -21,13 +29,19 @@ public class InventoryWarehouse {
 	@MapsId("locationId")
 	private Warehouse warehouse;
 
+	/**
+	 * Constructs an instance of this class without any parameters.
+	 */
 	public InventoryWarehouse() {
 		super();
 	}
 
 	/**
-	 * @param id
-	 * @param quantity
+	 * Constructs an instance of this class with specified parameters.
+	 * 
+	 * @param id       composite primary key consisting of an inventory and a
+	 *                 warehouse entity
+	 * @param quantity quantity of inventory to be added to warehouse
 	 */
 	public InventoryWarehouse(InventoryWarehouseId id, int quantity) {
 		super();
