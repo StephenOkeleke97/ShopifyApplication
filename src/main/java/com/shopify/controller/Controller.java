@@ -1,5 +1,10 @@
 package com.shopify.controller;
 
+import com.shopify.dto.ResponseDTO;
+import com.shopify.model.Inventory;
+import com.shopify.services.InventoryService;
+import com.shopify.services.WarehouseService;
+import com.shopify.util.Utility;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,12 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.shopify.dto.ResponseDTO;
-import com.shopify.model.Inventory;
-import com.shopify.services.InventoryService;
-import com.shopify.services.WarehouseService;
-import com.shopify.util.Utility;
 
+/**
+ * Class that represents a controller that exposes the application end point to
+ * external clients.
+ * 
+ * @author stephen
+ *
+ */
 @RestController
 @RequestMapping("api/v1/")
 public class Controller {
@@ -48,12 +55,12 @@ public class Controller {
 
 		if (!utility.validateWareHouseNameIsUnique(name)) {
 			response.setStatus(400);
-			return utility.generateResponse("There is already a warehouse with this name.", true, result);
+			return utility.generateResponse("There is already a warehouse with this name", true, result);
 		}
 
 		warehouseService.createWarehouse(name);
 
-		return utility.generateResponse("Warehouse successfully added.", false, result);
+		return utility.generateResponse("Warehouse successfully added", false, result);
 	}
 
 	/**
@@ -71,7 +78,7 @@ public class Controller {
 
 		if (!utility.validateStringArgs(name)) {
 			response.setStatus(400);
-			return utility.generateResponse("Invalid name.", true, result);
+			return utility.generateResponse("Invalid name", true, result);
 		}
 
 		if (!utility.validateWarehouseExists(id)) {
@@ -81,7 +88,7 @@ public class Controller {
 
 		if (!utility.validateWarehouseNameCanBeUpdated(id, name)) {
 			response.setStatus(400);
-			return utility.generateResponse("There is already a warehouse with this name.", true, result);
+			return utility.generateResponse("There is already a warehouse with this name", true, result);
 		}
 
 		warehouseService.editWarehouse(id, name);
@@ -104,7 +111,7 @@ public class Controller {
 			if (!utility.validateWarehouseInventoryCanBeDeleted(id)) {
 				response.setStatus(400);
 				String message = "A warehouse with live inventory cannot be deleted. "
-						+ "Please delete or transfer all inventory associated with this warehouse.";
+						+ "Please delete or transfer all inventory associated with this warehouse";
 				return utility.generateResponse(message, true, result);
 			}
 			warehouseService.deleteWarehouse(id);
@@ -124,10 +131,9 @@ public class Controller {
 		return result;
 	}
 
-//
 	/**
 	 * Creates new inventory and adds to "None" warehouse. Which means that
-	 * inventory is unassigned. If "None" warehouse does not exist, it is created.
+	 * inventory is unassigned.
 	 * 
 	 * @param name        name of new inventory
 	 * @param price       price of new inventory
@@ -397,11 +403,6 @@ public class Controller {
 	public @ResponseBody ResponseDTO getInventoryByWarehouse(@PathVariable long warehouseId,
 			HttpServletResponse response) {
 		ResponseDTO result = new ResponseDTO("Success", false);
-
-		if (warehouseId < 0) {
-			response.setStatus(400);
-			return utility.generateResponse("Warehouse ID must be positive", true, result);
-		}
 
 		if (!utility.validateWarehouseExists(warehouseId)) {
 			response.setStatus(400);
